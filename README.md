@@ -7,7 +7,7 @@ This is the Git repository of the docker image for MonaServer.
 Install docker and run the following command to get the MonaServer image :
 
 ```
-docker pull monaserver 
+docker pull thomasjammet/docker-mona
 ```
 
 Then start your MonaServer image with the command below :
