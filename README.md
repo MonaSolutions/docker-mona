@@ -13,5 +13,5 @@ docker pull monaserver
 Then start your MonaServer image with the command below :
 
 ```
-docker run -it --name Mona -p 80:80 -p 1935:1935 -p 554:554 -p 1935:1935/udp monaserver
+docker run -it --name Mona -p 80:80 -p 1935:1935 -p 554:554 -p 1935:1935/udp thomasjammet/docker-mona
 ```
