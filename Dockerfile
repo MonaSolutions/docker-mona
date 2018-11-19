@@ -28,9 +28,9 @@ RUN apk add --no-cache libgcc \
   && rm -Rf /usr/src/MonaServer2-master \ 
   && apk del .build-deps 
   
-WORKDIR /usr/local/bin 
+WORKDIR /usr/local/share/MonaTiny
 
 EXPOSE 80 1935 443 
 
 # Set MonaServer as default executable 
-CMD ["./MonaTiny", "/usr/local/share/MonaTiny/MonaTiny.ini --log=7"]
+CMD ["/usr/local/bin/MonaTiny", "--log=7"]
