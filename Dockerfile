@@ -1,16 +1,14 @@
 #
-# MonaServer Dockerfile
+# MonaServer2 Dockerfile
 
 FROM alpine
 
-MAINTAINER Thomas Jammet contact@monaserver.ovh
+LABEL maintainer="Thomas Jammet <contact@monaserver.ovh>"
 
-ENV LUAJIT_VERSION 2.0.4
-ENV LUAJIT_DOWNLOAD_SHA256 620fa4eb12375021bef6e4f237cbd2dd5d49e56beb414bee052c746beef1807d
-ENV MONA_VERSION 1.2
-ENV MONA_DOWNLOAD_SHA256 fd176fc50b83629d13fa295c976096d943b64ce03b6b751c3dae22f05777cabf
+ENV LUAJIT_VERSION 2.1.0-beta3
+ENV LUAJIT_DOWNLOAD_SHA256 1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
 
-# install prerequisites 
+# install prerequisites
 RUN apk add --no-cache libgcc \
 		libstdc++ \
 		openssl-dev \
@@ -18,7 +16,7 @@ RUN apk add --no-cache libgcc \
 		curl \
 		make \
 		g++ \
-
+		git \
 # Build & install luajit
 	&& mkdir -p /usr/src \
 	&& cd /usr/src \
@@ -30,27 +28,20 @@ RUN apk add --no-cache libgcc \
 	&& sed -i 's/#XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT/XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT/g' src/Makefile \
 	&& make \
 	&& make install \
-	# Correction of luajit-2.0.4 link name (TODO: delete it on next version)
-	&& ln -s /usr/local/lib/libluajit-5.1.so.2.0.4 /usr/local/lib/libluajit-5.1.so.2 \
 	&& cd ../ \
 	&& rm -Rf LuaJIT-$LUAJIT_VERSION \
-
 # Build & install MonaServer
-	&& curl -SL -o mona.tar.gz https://github.com/MonaSolutions/MonaServer/archive/$MONA_VERSION.tar.gz \
-	&& echo "$MONA_DOWNLOAD_SHA256 *mona.tar.gz" | sha256sum -c \
-	&& tar -xzf mona.tar.gz \
-	&& rm mona.tar.gz \
-	&& cd MonaServer-$MONA_VERSION \
-	# don't know why /usr/local/include/ is ignored by default
-	&& cd MonaBase && make && cd ../MonaCore && make && cd ../MonaServer && make INCLUDES="-I/usr/local/include/"\ 
+	&& git clone https://github.com/MonaSolutions/MonaServer2.git \
+	&& cd MonaServer2 \
+	&& cd MonaBase && make && cd ../MonaCore && make && cd ../MonaServer && make\
 	&& cp ../MonaBase/lib/libMonaBase.so ../MonaCore/lib/libMonaCore.so /usr/local/lib \
 	&& cp MonaServer /usr/local/bin \
-	&& rm -Rf /usr/src/MonaServer-$MONA_VERSION \
+	&& rm -Rf /usr/src/MonaServer2 \
 	&& apk del .build-deps
 
 WORKDIR /usr/local/bin
-	
-EXPOSE 80 1935 554
+
+EXPOSE 80 1935 443 3478
 
 # Set MonaServer as default executable
 CMD ["./MonaServer", "--log=7"]
