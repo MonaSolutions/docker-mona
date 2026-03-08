@@ -51,3 +51,19 @@ In this case it is possible to watch the logs in the *MonaServer.log/* directory
 ```
 docker exec mona tail -f /usr/local/bin/MonaTiny.log/0.log
 ```
+
+### Build options
+
+SRT support can be enabled at build time using a build argument.
+
+Enable SRT:
+
+```
+docker build --build-arg ENABLE_SRT=1 -t monaserver .
+```
+
+Default build (SRT disabled):
+
+```
+docker build -t monaserver .
+```
